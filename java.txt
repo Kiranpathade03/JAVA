@@ -1,0 +1,993 @@
+Q1.write a java program using multithreading to display all the alphabets ‘A’ to ‘Z’ after every 2 second.
+==>
+public class Slip26_1 extends Thread
+{
+char c;
+public void run()
+{
+for(c = 'A'; c<='Z';c++)
+{
+System.out.println(""+c);
+try
+
+{
+Thread.sleep(2000);
+}
+catch(Exception e)
+{
+e.printStackTrace();
+}
+}
+}
+public static void main(String args[])
+{
+Slip26_1 t = new Slip26_1();
+t.start();
+}
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q2.write a java program to accept the details of employee(Eno, EName , Designation ,Salary)from a user and store it into the database.(Using string).
+==>
+import java.sql.*;
+public class EmployeeDetails {
+   public static void main(String[] args) {
+      String url = "jdbc:mysql://localhost:3306/mydb";  // Replace mydb with your database name
+      String user = "root";  // Replace root with your username
+      String password = "password";  // Replace password with your password
+      
+      try {
+         // Load the MySQL driver
+         Class.forName("com.mysql.jdbc.Driver");
+         
+         // Establish the connection
+         Connection con = DriverManager.getConnection(url, user, password);
+         
+         // Accept employee details from the user
+         System.out.println("Enter employee details:");
+         System.out.print("Eno: ");
+         String eno = System.console().readLine();
+         System.out.print("EName: ");
+         String ename = System.console().readLine();
+         System.out.print("Designation: ");
+         String designation = System.console().readLine();
+         System.out.print("Salary: ");
+         String salary = System.console().readLine();
+         
+         // Prepare the SQL statement
+         String sql = "INSERT INTO employee (Eno, EName, Designation, Salary) VALUES (?, ?, ?, ?)";
+         PreparedStatement stmt = con.prepareStatement(sql);
+         stmt.setString(1, eno);
+         stmt.setString(2, ename);
+         stmt.setString(3, designation);
+         stmt.setString(4, salary);
+         
+         // Execute the SQL statement
+         int rows = stmt.executeUpdate();
+         System.out.println(rows + " row(s) affected");
+         
+         // Close the connection
+         con.close();
+      } catch (Exception e) {
+         System.out.println(e);
+      }
+   }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q3.write a java program to read ‘N’ names of your friends, store it into HashSet and display them in a ascending order.
+==>
+import java.util.*;
+
+public class FriendNames {
+    public static void main(String[] args) {
+        HashSet<String> names = new HashSet<String>();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of names: ");
+        int n = sc.nextInt();
+
+        for (int i = 1; i <= n; i++) {
+            System.out.print("Enter name " + i + ": ");
+            String name = sc.next();
+            names.add(name);
+        }
+
+        List<String> sortedNames = new ArrayList<String>(names);
+        Collections.sort(sortedNames);
+
+        System.out.println("Sorted names:");
+        for (String name : sortedNames) {
+            System.out.println(name);
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q4. Design a servlet that provide information about a HTTP request from a client , such as IPAddress and browser type. The servlet also provide information about the server on which the servlet is running , such as the operating system type, and the names of currenty loaded servlet.
+==>
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class RequestInfoServlet extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Get client request information
+        String ipAddress = request.getRemoteAddr();
+        String userAgent = request.getHeader("User-Agent");
+
+        // Get server information
+        ServletContext context = getServletContext();
+        String serverInfo = context.getServerInfo();
+        String osName = System.getProperty("os.name");
+        String[] servletNames = context.getServletRegistrationNames().toArray(new String[0]);
+
+        // Write the retrieved information to the response output stream
+        out.println("<html><head><title>Request Information</title></head><body>");
+        out.println("<h1>Request Information</h1>");
+        out.println("<p>Client IP Address: " + ipAddress + "</p>");
+        out.println("<p>Client Browser Type: " + userAgent + "</p>");
+        out.println("<p>Server OS Type: " + osName + "</p>");
+        out.println("<p>Server Information: " + serverInfo + "</p>");
+        out.println("<p>Loaded Servlets: </p><ul>");
+        for (String servletName : servletNames) {
+            out.println("<li>" + servletName + "</li>");
+        }
+        out.println("</ul></body></html>");
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q5.Write a java program using Runnable interface to blink Text on the JFrame(using swing).
+==>
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class BlinkText implements Runnable {
+    private JLabel label;
+
+    public BlinkText(JLabel label) {
+        this.label = label;
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                label.setVisible(!label.isVisible());
+                Thread.sleep(500); // wait for 500ms
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Blink Text");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        JLabel label = new JLabel("Blinking Text");
+        frame.add(label);
+
+        BlinkText blink = new BlinkText(label);
+        new Thread(blink).start();
+
+        frame.setSize(200, 100);
+        frame.setVisible(true);
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q6. Write a Java program to store city names and their STD codes using an appropriate collection and perform following operations:
+ i. Add a new city and its code (No duplicates)
+ ii. Remove a city from the collection
+ iii. Search for a city name and display the code
+==>
+import java.util.*;
+
+public class CityStdCodes {
+    public static void main(String[] args) {
+        // create a HashMap to store the city names and their STD codes
+        HashMap<String, String> cityCodes = new HashMap<>();
+
+        // add some initial data to the HashMap
+        cityCodes.put("Mumbai", "022");
+        cityCodes.put("Delhi", "011");
+        cityCodes.put("Kolkata", "033");
+        cityCodes.put("Chennai", "044");
+
+        // add a new city and its code (no duplicates)
+        String city = "Bengaluru";
+        String code = "080";
+        if (!cityCodes.containsKey(city)) {
+            cityCodes.put(city, code);
+            System.out.println(city + " added with code " + code);
+        } else {
+            System.out.println(city + " already exists with code " + cityCodes.get(city));
+        }
+
+        // remove a city from the collection
+        city = "Kolkata";
+        if (cityCodes.containsKey(city)) {
+            cityCodes.remove(city);
+            System.out.println(city + " removed from the collection");
+        } else {
+            System.out.println(city + " not found in the collection");
+        }
+
+        // search for a city name and display the code
+        city = "Delhi";
+        if (cityCodes.containsKey(city)) {
+            System.out.println("STD code for " + city + " is " + cityCodes.get(city));
+        } else {
+            System.out.println(city + " not found in the collection");
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q7. Write a java program to define a thread for printing text on output screen for ‘n’ number of times. Create 3 threads and run them. Pass the text ‘n’ parameters to the thread constructor. Example: i. First thread prints “COVID19” 10 times.
+ ii. Second thread prints “LOCKDOWN2020” 20 times
+ iii. Third thread prints “VACCINATED2021” 30 times 
+==>
+public class TextPrinter implements Runnable {
+    private String text;
+    private int numTimes;
+
+    public TextPrinter(String text, int numTimes) {
+        this.text = text;
+        this.numTimes = numTimes;
+    }
+
+    public void run() {
+        for (int i = 0; i < numTimes; i++) {
+            System.out.println(text);
+        }
+    }
+
+    public static void main(String[] args) {
+        // create three threads with different text and number of times
+        Thread t1 = new Thread(new TextPrinter("COVID19", 10));
+        Thread t2 = new Thread(new TextPrinter("LOCKDOWN2020", 20));
+        Thread t3 = new Thread(new TextPrinter("VACCINATED2021", 30));
+
+        // start the threads
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************ Q8.Write a JSP program to check whether a given number is prime or not. Display the result in red color
+==>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Check if a Number is Prime</title>
+</head>
+<body>
+    <h1>Check if a Number is Prime</h1>
+    
+    <%-- Get the number from the user --%>
+    <%
+        int num = Integer.parseInt(request.getParameter("num"));
+        boolean isPrime = true;
+        
+        if (num < 2) {
+            isPrime = false;
+        } else {
+            for (int i = 2; i <= num/2; i++) {
+                if (num % i == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+        }
+    %>
+    
+    <%-- Display the result --%>
+    <p>The number <%= num %> is 
+        <% if (isPrime) { %>
+            <span style="color:red">prime</span>
+        <% } else { %>
+            not prime
+        <% } %>
+    </p>
+    
+</body>
+</html>
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q9. Design an HTML page which passes customer number to a search servlet. The servlet searches for the customer number in a database (customer table) and returns customer details if found the number otherwise display error message.
+==>
+Search.html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Search Customer</title>
+</head>
+<body>
+	<h1>Search Customer</h1>
+	<form action="SearchServlet" method="post">
+		<label for="custNo">Customer Number:</label>
+		<input type="text" id="custNo" name="custNo"><br><br>
+		<input type="submit" value="Search">
+	</form>
+</body>
+</html>
+***************************************************************************SearchServlet
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class SearchServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String custNo = request.getParameter("custNo");
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			// Load the JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+			
+			// Connect to the database
+			String url = "jdbc:mysql://localhost:3306/test";
+			String username = "root";
+			String password = "password";
+			conn = DriverManager.getConnection(url, username, password);
+			
+			// Prepare the SQL statement
+			String sql = "SELECT * FROM customer WHERE custNo = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, custNo);
+			
+			// Execute the query
+			rs = stmt.executeQuery();
+			
+			// Display the results or error message
+			PrintWriter out = response.getWriter();
+			if (rs.next()) {
+				String name = rs.getString("name");
+				String address = rs.getString("address");
+				String phone = rs.getString("phone");
+				
+				out.println("<h1>Customer Details</h1>");
+				out.println("<p>Name: " + name + "</p>");
+				out.println("<p>Address: " + address + "</p>");
+				out.println("<p>Phone: " + phone + "</p>");
+			} else {
+				out.println("<h1>Error</h1>");
+				out.println("<p>Customer number not found</p>");
+			}
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close the resources
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
+************************************************************************************************************************************************************************************************************************************************************************************************
+Q10.Write a Java program to display information about all columns in the DONAR table using ResultSetMetaData.
+==>
+import java.sql.*;
+
+public class DisplayColumnsInfo {
+    public static void main(String[] args) {
+        try {
+            // Load the JDBC driver
+            Class.forName("com.mysql.jdbc.Driver");
+
+            // Connect to the database
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "username", "password");
+
+            // Create a Statement object
+            Statement stmt = conn.createStatement();
+
+            // Execute a query to get the column information for the DONAR table
+            ResultSet rs = stmt.executeQuery("SELECT * FROM DONAR");
+
+            // Get the ResultSetMetaData object for the result set
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            // Get the number of columns in the result set
+            int numCols = rsmd.getColumnCount();
+
+            // Print information about each column
+            for (int i = 1; i <= numCols; i++) {
+                System.out.println("Column " + i + ":");
+                System.out.println("  Name: " + rsmd.getColumnName(i));
+                System.out.println("  Type: " + rsmd.getColumnTypeName(i));
+                System.out.println("  Size: " + rsmd.getColumnDisplaySize(i));
+                System.out.println("  Nullable: " + (rsmd.isNullable(i) == ResultSetMetaData.columnNullable ? "Yes" : "No"));
+                System.out.println();
+            }
+
+            // Close the ResultSet and Statement objects
+            rs.close();
+            stmt.close();
+
+            // Close the database connection
+            conn.close();
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q11. Write a JSP program to check whether given number is Perfect or not. (Use Include directive). 
+==>
+Java code
+public class PerfectNumber {
+    public static boolean isPerfect(int n) {
+        int sum = 0;
+        for (int i = 1; i <= n / 2; i++) {
+            if (n % i == 0) {
+                sum += i;
+            }
+        }
+        return sum == n;
+    }
+}
+***************************************************************************
+Jsp code
+<%@ page language="java" %>
+<%@ page import="PerfectNumber" %>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Perfect Number Check</title>
+</head>
+<body>
+	<h1>Perfect Number Check</h1>
+	<%
+		int n = Integer.parseInt(request.getParameter("number"));
+		if (PerfectNumber.isPerfect(n)) {
+			out.println(n + " is a perfect number.");
+		} else {
+			out.println(n + " is not a perfect number.");
+		}
+	%>
+</body>
+</html>
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q12.Write a Java Program to create a PROJECT table with field’s project_id, Project_name, Project_description, Project_Status. Insert values in the table. Display all the details of the PROJECT table in a tabular format on the screen.(using swing).
+==>
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+public class ProjectTableDemo extends JFrame {
+    private JTable table;
+    private DefaultTableModel model;
+
+    public ProjectTableDemo() {
+        super("Project Table Demo");
+
+        // Create a connection to the database
+        String url = "jdbc:mysql://localhost:3306/mydb";
+        String user = "root";
+        String password = "password";
+        try (Connection con = DriverManager.getConnection(url, user, password)) {
+            // Create the PROJECT table
+            String createTable = "CREATE TABLE IF NOT EXISTS PROJECT ("
+                + "project_id INT NOT NULL PRIMARY KEY,"
+                + "project_name VARCHAR(50) NOT NULL,"
+                + "project_description VARCHAR(200),"
+                + "project_status VARCHAR(20) NOT NULL"
+                + ")";
+            try (Statement stmt = con.createStatement()) {
+                stmt.executeUpdate(createTable);
+            }
+
+            // Insert some values into the PROJECT table
+            String insertData = "INSERT INTO PROJECT (project_id, project_name, project_description, project_status) VALUES "
+                + "(1, 'Project 1', 'Description of Project 1', 'Active'),"
+                + "(2, 'Project 2', 'Description of Project 2', 'Inactive'),"
+                + "(3, 'Project 3', 'Description of Project 3', 'Active')";
+            try (Statement stmt = con.createStatement()) {
+                stmt.executeUpdate(insertData);
+            }
+
+            // Retrieve all the details of the PROJECT table
+            String selectData = "SELECT * FROM PROJECT";
+            try (Statement stmt = con.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery(selectData)) {
+                    // Create a table model with the column names
+                    model = new DefaultTableModel();
+                    model.addColumn("Project ID");
+                    model.addColumn("Project Name");
+                    model.addColumn("Project Description");
+                    model.addColumn("Project Status");
+
+                    // Add the rows from the result set to the table model
+                    while (rs.next()) {
+                        Object[] row = new Object[4];
+                        row[0] = rs.getInt("project_id");
+                        row[1] = rs.getString("project_name");
+                        row[2] = rs.getString("project_description");
+                        row[3] = rs.getString("project_status");
+                        model.addRow(row);
+                    }
+                }
+            }
+
+            // Create a JTable with the table model
+            table = new JTable(model);
+
+            // Add the JTable to a JScrollPane and add it to the frame
+            JScrollPane scrollPane = new JScrollPane(table);
+            getContentPane().add(scrollPane);
+
+            // Set the size and visibility of the frame
+            setSize(500, 300);
+            setVisible(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        new ProjectTableDemo();
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q13.Write a Java program to display information about the database and list all the tables in the database. (Use DatabaseMetaData).
+==>
+import java.sql.*;
+
+public class DatabaseInfo {
+
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/mydatabase";
+        String username = "root";
+        String password = "mypassword";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+
+            // Display database information
+            System.out.println("Database Product Name: " + metaData.getDatabaseProductName());
+            System.out.println("Database Product Version: " + metaData.getDatabaseProductVersion());
+            System.out.println("Driver Name: " + metaData.getDriverName());
+            System.out.println("Driver Version: " + metaData.getDriverVersion());
+
+            // List all tables in the database
+            System.out.println("\nTables in the database:");
+            ResultSet rs = metaData.getTables(null, null, null, new String[] {"TABLE"});
+            while (rs.next()) {
+                System.out.println(rs.getString("TABLE_NAME"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error connecting to the database: " + e.getMessage());
+        }
+    }
+} 
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q14.Write a Java program to show lifecycle (creation, sleep, and dead) of a thread. Program should print randomly the name of thread and value of sleep time. The name of the thread should be hard coded through constructor. The sleep time of a thread will be a random integer in the range 0 to 4999.
+==>
+import java.util.Random;
+
+public class ThreadLifecycle implements Runnable {
+    private String threadName;
+
+    public ThreadLifecycle(String threadName) {
+        this.threadName = threadName;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(threadName + " created");
+        Random random = new Random();
+        int sleepTime = random.nextInt(5000);
+        System.out.println(threadName + " will sleep for " + sleepTime + " milliseconds");
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(threadName + " dead");
+    }
+
+    public static void main(String[] args) {
+        ThreadLifecycle t1 = new ThreadLifecycle("Thread 1");
+        ThreadLifecycle t2 = new ThreadLifecycle("Thread 2");
+        ThreadLifecycle t3 = new ThreadLifecycle("Thread 3");
+        Thread thread1 = new Thread(t1);
+        Thread thread2 = new Thread(t2);
+        Thread thread3 = new Thread(t3);
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q15.Write a java program to display name and priority of a Thread
+==>
+public class ThreadInfo implements Runnable {
+
+    @Override
+    public void run() {
+        System.out.println("Thread name: " + Thread.currentThread().getName());
+        System.out.println("Thread priority: " + Thread.currentThread().getPriority());
+    }
+
+    public static void main(String[] args) {
+        ThreadInfo threadInfo = new ThreadInfo();
+        Thread thread = new Thread(threadInfo, "MyThread");
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************ 
+Q16.Write a SERVLET program which counts how many times a user has visited a web page. If user is visiting the page for the first time, display a welcome message. If the user is revisiting the page, display the number of times visited. (Use Cookie)
+==>
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class VisitCounter extends HttpServlet {
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int count = 0;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("visitCount")) {
+                    count = Integer.parseInt(cookie.getValue());
+                    break;
+                }
+            }
+        }
+
+        count++;
+        Cookie visitCookie = new Cookie("visitCount", String.valueOf(count));
+        visitCookie.setMaxAge(60 * 60 * 24 * 365); // 1 year in seconds
+        response.addCookie(visitCookie);
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<html><head><title>Visit Counter</title></head>");
+        out.println("<body>");
+        if (count == 1) {
+            out.println("<h1>Welcome to our website!</h1>");
+        } else {
+            out.println("<h1>You have visited this page " + count + " times.</h1>");
+        }
+        out.println("</body></html>");
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q17.Write a java program using Multithreading to accept a String from a user and display each vowel from a String after every 3 seconds. 
+==>
+public class VowelThread implements Runnable {
+
+    private String str;
+
+    public VowelThread(String str) {
+        this.str = str;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (isVowel(c)) {
+                System.out.println(c);
+            }
+            try {
+                Thread.sleep(3000); // sleep for 3 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean isVowel(char c) {
+        return "AEIOUaeiou".indexOf(c) != -1;
+    }
+}
+***************************************************************************
+*********************************************************************************************************************************************************************************************************************************Q18. Write a java program to accept ‘N’ student names through command line, store them into the appropriate Collection and display them by using Iterator and ListIterator interface.
+==>
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+
+public class StudentNames {
+    public static void main(String[] args) {
+        // create an ArrayList to store student names
+        ArrayList<String> studentNames = new ArrayList<>();
+
+        // check if command line argument is passed and store it in 'n'
+        if (args.length == 1) {
+            try {
+                int n = Integer.parseInt(args[0]);
+                System.out.println("Enter " + n + " student names:");
+
+                // read 'n' student names from the console and add them to the ArrayList
+                for (int i = 0; i < n; i++) {
+                    String name = System.console().readLine();
+                    studentNames.add(name);
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid argument: " + args[0]);
+                System.exit(1);
+            }
+        } else {
+            System.err.println("Usage: java StudentNames <number of students>");
+            System.exit(1);
+        }
+
+        // display the student names using Iterator interface
+        System.out.println("Student names (using Iterator interface):");
+        Iterator<String> iterator = studentNames.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
+        // display the student names using ListIterator interface
+        System.out.println("Student names (using ListIterator interface):");
+        ListIterator<String> listIterator = studentNames.listIterator();
+        while (listIterator.hasNext()) {
+            System.out.println(listIterator.next());
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q19. Write a Java program using Multithreading for a simple search engine. Accept a string to be searched. Search the string in all text files in the current folder. Use a separate thread for each file. The result should display the filename and line number where the string is found.
+==>
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class SearchEngine implements Runnable {
+    private String filename;
+    private String searchString;
+
+    public SearchEngine(String filename, String searchString) {
+        this.filename = filename;
+        this.searchString = searchString;
+    }
+
+    @Override
+    public void run() {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = br.readLine()) != null) {
+                lineNumber++;
+                if (line.contains(searchString)) {
+                    System.out.println(filename + " : " + lineNumber + " : " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + filename);
+        }
+    }
+
+    public static void main(String[] args) {
+        // get the search string from command line argument
+        if (args.length != 1) {
+            System.err.println("Usage: java SearchEngine <search string>");
+            System.exit(1);
+        }
+        String searchString = args[0];
+
+        // get the list of files in the current folder
+        File folder = new File(".");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt"));
+
+        // start a thread for each file
+        for (File file : files) {
+            Thread t = new Thread(new SearchEngine(file.getName(), searchString));
+            t.start();
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************Q20. Write a JSP program to calculate sum of first and last digit of a given number. Display sum in Red Color with font size 18.
+==>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sum of First and Last Digit</title>
+</head>
+<body>
+    <h1>Calculate Sum of First and Last Digit</h1>
+    <form method="post" action="sum.jsp">
+        <label for="number">Enter a Number:</label>
+        <input type="number" name="number" required>
+        <br>
+        <button type="submit">Calculate</button>
+    </form>
+    <hr>
+    <%
+        if (request.getMethod().equals("POST")) {
+            int number = Integer.parseInt(request.getParameter("number"));
+            int firstDigit = number;
+            while (firstDigit >= 10) {
+                firstDigit /= 10;
+            }
+            int lastDigit = number % 10;
+            int sum = firstDigit + lastDigit;
+            %>
+            <h2 style="color:red; font-size:18px;">Sum of first and last digit of <%= number %> is <%= sum %></h2>
+            <%
+        }
+    %>
+</body>
+</html>
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q21. Write a Java program to delete the details of given employee (ENo EName Salary). Accept employee ID through command line. (Use PreparedStatement Interface) .
+==>
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class DeleteEmployee {
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Usage: java DeleteEmployee <employee id>");
+            System.exit(1);
+        }
+
+        String employeeId = args[0];
+
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "username", "password")) {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM employee WHERE ENo = ?");
+            stmt.setString(1, employeeId);
+
+            int rowsDeleted = stmt.executeUpdate();
+
+            if (rowsDeleted == 1) {
+                System.out.println("Employee with ID " + employeeId + " has been deleted successfully.");
+            } else {
+                System.err.println("Employee with ID " + employeeId + " not found.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error deleting employee: " + e.getMessage());
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q22. Write a JSP program to calculate sum of first and last digit of a given number. Display sum in Red Color with font size 18.
+==>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sum of First and Last Digit</title>
+</head>
+<body>
+    <h1>Calculate Sum of First and Last Digit</h1>
+    <form method="post" action="sum.jsp">
+        <label for="number">Enter a Number:</label>
+        <input type="number" name="number" required>
+        <br>
+        <button type="submit">Calculate</button>
+    </form>
+    <hr>
+    <%
+        if (request.getMethod().equals("POST")) {
+            int number = Integer.parseInt(request.getParameter("number"));
+            int firstDigit = number;
+            while (firstDigit >= 10) {
+                firstDigit /= 10;
+            }
+            int lastDigit = number % 10;
+            int sum = firstDigit + lastDigit;
+            %>
+            <h2 style="color:red; font-size:18px;">Sum of first and last digit of <%= number %> is <%= sum %></h2>
+            <%
+        }
+    %>
+</body>
+</html>
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q23. Write a Java program to display information about all columns in the DONAR table using ResultSetMetaData.
+==> 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DisplayDonarTableColumns {
+    public static void main(String[] args) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "username", "password")) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM DONAR");
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String columnType = metaData.getColumnTypeName(i);
+                int columnSize = metaData.getColumnDisplaySize(i);
+
+                System.out.printf("Column name: %s, type: %s, size: %d%n", columnName, columnType, columnSize);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error displaying DONAR table columns: " + e.getMessage());
+        }
+    }
+}
+************************************************************************************************************************************************************************************************************************************************************************************************************
+Q24. Write a Java program to create LinkedList of integer objects and perform the following: 
+i. Add element at first position
+ ii. Delete last element
+ iii. Display the size of link list
+==>
+
+import java.util.LinkedList;
+
+public class LinkedListDemo {
+    public static void main(String[] args) {
+        LinkedList<Integer> list = new LinkedList<>();
+
+        // Add elements at the first position
+        list.addFirst(10);
+        list.addFirst(20);
+        list.addFirst(30);
+
+        System.out.println("Linked list after adding elements at the first position: " + list);
+
+        // Delete last element
+        if (!list.isEmpty()) {
+            list.removeLast();
+        }
+
+        System.out.println("Linked list after deleting last element: " + list);
+
+        // Display the size of the linked list
+        System.out.println("Size of the linked list: " + list.size());
+    }
+}
+
+************************************************************************************************************************************************************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
